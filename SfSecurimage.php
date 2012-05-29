@@ -7,7 +7,7 @@ class SfSecurimage extends \securimage {
     private $session;
     private $sessionKey = 'Securimage.codeValue';
 
-    function __construct($session)
+    public function __construct($session)
     {
         $this->session = $session;
     }
@@ -19,7 +19,7 @@ class SfSecurimage extends \securimage {
      * @access public
      * @return void
      */
-    function getCode()
+    public function getCode()
     {
         if ($this->session->has($this->sessionKey)) {
             return $this->session->get($this->sessionKey);
@@ -34,24 +34,43 @@ class SfSecurimage extends \securimage {
      * @access public
      * @return void
      */
-    function saveData()
+    public function saveData()
     {
         $this->session->set($this->sessionKey, strtolower($this->code));
     }
 
 
     /**
+     * Validate the code entered by the user.
+     *
+     * @param string $code The code the user entered
+     * @param boolean $persistCookie Tell to remove or persist the value in the cookies
+     * @access public
+     * @return boolean
+     */
+    public function check($code, $persistCookie = false)
+    {
+        $this->code_entered = $code;
+        $this->validate($persistCookie);
+        return $this->correct_code;
+    }
+
+
+    /**
      * validate - Validates the captcha given.
      * 
+     * @param boolean $persistCookie Tell to remove or persist the value in the cookies
      * @access public
      * @return void
      */
-    function validate()
+    public function validate($persistCookie = false)
     {
         if ($this->session->has($this->sessionKey)) {
             if ($this->session->get($this->sessionKey) == strtolower(trim($this->code_entered))) {
                 $this->correct_code = true;
-                $this->session->remove($this->sessionKey);
+                if (!$persistCookie) {
+                    $this->session->remove($this->sessionKey);
+                }
                 return true;
             }
         }
