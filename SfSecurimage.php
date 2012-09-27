@@ -1,6 +1,6 @@
 <?php
 
-require_once '../vendor/securimage/securimage.php';
+require_once __DIR__ . '/securimage.php';
 
 class SfSecurimage extends \securimage {
 
